@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zapisovalnik časov strežbe</title>
+    <style>
+      body {
+        font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+        font-size: 22px;
+      }
+
+      p {
+        font-size: 26px;
+      }
+
+      button {
+        font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+        font-size: 20px;
+        padding: 12px 16px;
+        margin-left: 3px;
+        margin-bottom: 15px;
+      }
+      /* Oblikovanje tabele */
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      td,
+      th {
+        border: 1px solid #e5f3ff;
+        text-align: center;
+        padding: 8px;
+      }
+      th {
+        background-color: #64b5fb;
+      }
+
+      tr:nth-child(even) {
+        background-color: #e5f3ff;
+      }
+      /* Konec tabele */
+    </style>
+  </head>
+  <body>
+    <p>Zapisovalnik časov strežbe</p>
+    <div id="butns">
+      <button onclick="startTimer()">Start</button>
+      <button onclick="measureNow()">Enter</button>
+      <button onclick="stopTimer()">Stop</button>
+      <button onclick="resetTimer()">Reset</button>
+    </div>
+    <table>
+      <tr>
+        <th colspan="2">Trenutna meritev</th>
+      </tr>
+      <tr>
+        <th>Števec</th>
+        <th>Štoparica</th>
+      </tr>
+      <tr>
+        <td id="count">0</td>
+        <td id="stopwatch">00:00:00</td>
+      </tr>
+    </table>
+
+    <br />
+    <br />
+    <table id="printMeasurements">
+      <tr>
+        <th colspan="4">Časi strežbe</th>
+      </tr>
+      <tr>
+        <th>Zaporedna številka</th>
+        <th>Ura</th>
+        <th>Minuta</th>
+        <th>Sekunda</th>
+      </tr>
+    </table>
+    <!-- <table ></table> -->
+    <script>
+      const AllMeasurements = [];
+
+      /* Stoparica  - tabela 1 */
+      const stopwatch = document.getElementById("stopwatch");
+
+      let hr = 0;
+      let min = 0;
+      let sec = 0;
+      let stoptime = true;
+
+      let count = 0;
+      let measurement = {};
+
+      function startTimer() {
+        if (stoptime == true) {
+          stoptime = false;
+          timerCycle();
+        }
+      }
+      function stopTimer() {
+        if (stoptime == false) {
+          stoptime = true;
+        }
+      }
+
+      let timeout;
+      function timerCycle() {
+        if (stoptime == false) {
+          sec = parseInt(sec);
+          min = parseInt(min);
+          hr = parseInt(hr);
+
+          sec = sec + 1;
+
+          if (sec == 60) {
+            min = min + 1;
+            sec = 0;
+          }
+          if (min == 60) {
+            hr = hr + 1;
+            min = 0;
+            sec = 0;
+          }
+
+          if (sec < 10 || sec == 0) {
+            sec = "0" + sec;
+          }
+          if (min < 10 || min == 0) {
+            min = "0" + min;
+          }
+          if (hr < 10 || hr == 0) {
+            hr = "0" + hr;
+          }
+
+          // izpis na zaslon
+          stopwatch.innerHTML = hr + ":" + min + ":" + sec;
+
+          timeout = setTimeout("timerCycle()", 1000);
+        }
+      }
+
+      function resetTimer() {
+        stopwatch.innerHTML = "00:00:00";
+        stoptime = true;
+        hr = 0;
+        sec = 0;
+        min = 0;
+      }
+      /* Konec štoparice - tabela 1 */
+
+      function measureNow() {
+        count++;
+        // povečanje števca
+        let currentCount = document.getElementById("count");
+        currentCount.innerHTML = count + 1;
+
+        // shranjevanje v tabelo
+        measurement = {
+          count: count,
+          hour: hr,
+          min: min,
+          sec: sec,
+        };
+        AllMeasurements.push(measurement);
+
+        //izpis v tabelo
+        const table2 = document.getElementById("printMeasurements");
+
+        AllMeasurements.forEach((element) => {
+          if (count == element.count) {
+            const row = document.createElement("tr");
+            const rowCount = document.createElement("td");
+            const rowHour = document.createElement("td");
+            const rowMin = document.createElement("td");
+            const rowSec = document.createElement("td");
+
+            rowCount.innerHTML = element.count;
+            rowHour.innerHTML = element.hour;
+            rowMin.innerHTML = element.min;
+            rowSec.innerHTML = element.sec;
+
+            row.appendChild(rowCount);
+            row.appendChild(rowHour);
+            row.appendChild(rowMin);
+            row.appendChild(rowSec);
+
+            table2.appendChild(row);
+
+            // resetiranje štoparice
+            resetTimer();
+            clearTimeout(timeout);
+            startTimer();
+          }
+        });
+
+        window.onbeforeunload = function (event) {
+          return confirm("Confirm refresh");
+        };
+      }
+    </script>
+  </body>
+</html>
