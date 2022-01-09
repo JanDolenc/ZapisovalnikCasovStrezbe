@@ -1,5 +1,6 @@
 # ZapisovalnikCasovStrezbe
-Spremljanje časov strežbe za seminarsko nalogo pri predmetu Optimiranje in simulacija procesov - FOV.
+Spremljanje časov strežbe za seminarsko nalogo pri predmetu Optimiranje in simulacija sistemov - FOV.
+
 
 
 ## Uporaba
